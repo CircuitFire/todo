@@ -1,5 +1,5 @@
 [package]
-name = "core"
+name = "cli"
 version = "0.1.0"
 authors = ["CircuitFire"]
 edition = "2018"
@@ -7,6 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-tree = {git = "https://github.com/CircuitFire/tree.git"}
+core = {path = "../core"}
+frames = {git = "https://github.com/CircuitFire/frames.git", features = [ "serde" ]}
 bytebuffer = {git = "https://github.com/CircuitFire/bytebuffer.git"}
-serde = { version = "1.0.133", features = [ "derive" ] }
+ez-quick-xml = {git = "https://github.com/CircuitFire/ez-quick-xml.git"}
