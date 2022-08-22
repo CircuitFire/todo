@@ -140,10 +140,10 @@ impl Settings {
         let name = BytesStart::borrowed_name(name);
         writer.write_event(Event::Start(name.to_borrowed()))?;
 
-            writer.named_value(b"completed",    &formatter.get_completed())?;
+            writer.named_value(b"completed",  &formatter.get_completed())?;
             writer.named_value(b"incomplete", &formatter.get_incomplete())?;
-            writer.named_value(b"indent",    &formatter.get_indent())?;
-            writer.named_value(b"type",   &formatter.get_type())?;
+            writer.named_value(b"indent",     &formatter.get_indent())?;
+            writer.named_value(b"type",       &formatter.get_type())?;
 
         writer.write_event(Event::End(name.to_end()))?;
         Ok(())

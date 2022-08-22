@@ -4,8 +4,9 @@ use std::path::PathBuf;
 use super::*;
 use frames::*;
 
-use crossterm::{terminal, ExecutableCommand};
+use crossterm::{terminal, ExecutableCommand, style};
 use terminal::{EnterAlternateScreen, LeaveAlternateScreen};
+use style::ResetColor;
 use ez_quick_xml::quick_xml;
 
 pub enum MainControls {
@@ -34,7 +35,7 @@ enum LeaveTo {
 }
 
 impl Todo{
-    pub fn new(reset: bool) -> quick_xml::Result<Todo> {
+    pub fn new(reset: bool, file: Option<PathBuf>) -> quick_xml::Result<Todo> {
         if reset {
             Settings::reset();
         }
@@ -50,13 +51,25 @@ impl Todo{
         menu.push(String::from("Load List."));
         menu.push(String::from("Settings."));
 
+        //if a file was given as an arg start with it open and move current dir to its parent.
+        let files = if let Some(file) = file {
+            if let Some(parent) = file.parent() {
+                let _ = std::env::set_current_dir(PathBuf::from(parent));
+            }
+            
+            vec![PathBuf::from(file.file_name().unwrap())]
+        }
+        else {
+            Vec::new()
+        };
+
         Ok(Todo{
             list: list,
             menu: menu,
             prompt: Prompt::new(&mut manager, &settings.colors()),
             manager: manager,
             settings: settings,
-            files: Vec::new(),
+            files: files,
         })
     }
 
@@ -66,8 +79,14 @@ impl Todo{
         stdout().execute(terminal::SetTitle("todo")).unwrap();
         stdout().execute(EnterAlternateScreen).unwrap();
         terminal::enable_raw_mode().unwrap();
-
         self.manager.match_size().unwrap();
+
+        //if files is not empty then it means there was a provided file and it should be opened automatically.
+        if !self.files.is_empty() {
+            self.menu.set_pointer_no_update(4);
+            self.leave_to(LeaveTo::LoadList);
+        }
+        
         self.write_menu();
         self.menu.set_pointer(0, &mut self.manager, &self.settings.colors());
         self.set_prompt_selected();
@@ -86,6 +105,7 @@ impl Todo{
         }
 
         terminal::disable_raw_mode().unwrap();
+        stdout().execute(ResetColor).unwrap();
         stdout().execute(LeaveAlternateScreen).unwrap();
     }
 
@@ -139,7 +159,7 @@ impl Todo{
         }
 
         self.menu.enable();
-        self.menu.update(&mut self.manager);
+        self.write_menu();
     }
 
     fn select(&mut self){
@@ -192,8 +212,7 @@ impl Todo{
             }
         }
 
-        self.menu.color_pointer(&self.settings.colors());
-        self.menu.update(&mut self.manager);
+        self.menu.refresh(&self.settings.colors(), &mut self.manager);
     }
 
     fn set_dir(&mut self) {

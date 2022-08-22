@@ -8,6 +8,6 @@ edition = "2018"
 
 [dependencies]
 core = {path = "../core"}
-frames = {git = "https://github.com/CircuitFire/frames.git", features = [ "serde" ]}
+frames = {git = "https://github.com/CircuitFire/frames.git", tag = "0.1.0", features = [ "serde" ]}
 bytebuffer = {git = "https://github.com/CircuitFire/bytebuffer.git"}
 ez-quick-xml = {git = "https://github.com/CircuitFire/ez-quick-xml.git"}

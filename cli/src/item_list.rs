@@ -51,7 +51,8 @@ impl ItemList {
     }
 
     pub fn new_list(&mut self, name: String) -> Data{
-        self.ui.pointer = 0;
+        //self.ui.pointer = 0;
+        self.ui.set_pointer_no_update(0);
         let core = Core::new(name);
 
         Data{
@@ -61,7 +62,8 @@ impl ItemList {
     }
 
     pub fn load_list(&mut self, name: &PathBuf) -> Result<Data, ByteErr> {
-        self.ui.pointer = 0;
+        //self.ui.pointer = 0;
+        self.ui.set_pointer_no_update(0);
         let core = Core::load(name)?;
 
         Ok(Data{
@@ -135,7 +137,8 @@ impl ItemList {
 
         for (i, node) in data.info.iter().enumerate(){
             if node.id == id {
-                self.ui.pointer = i;
+                //self.ui.pointer = i;
+                self.ui.set_pointer_no_update(i);
                 break;
             }
         }
@@ -145,14 +148,14 @@ impl ItemList {
 
     fn inc_depth(&mut self, data: &mut Data, settings: &mut Settings, manager: &mut Manager){
         data.core.inc_depth(1);
-        let id = data.info[self.ui.pointer].id;
+        let id = data.info[self.ui.pointer()].id;
 
         self.find_new_id_pos(id, data, settings, manager);
     }
 
     fn dec_depth(&mut self, data: &mut Data, settings: &mut Settings, manager: &mut Manager){
         data.core.dec_depth(1);
-        let current = data.info[self.ui.pointer];
+        let current = data.info[self.ui.pointer()];
 
         let id = if current.depth > data.core.depth() {
             data.core.parent_id(current.id)
@@ -165,7 +168,7 @@ impl ItemList {
     }
 
     fn toggle(&mut self, data: &mut Data, settings: &mut Settings, manager: &mut Manager) {
-        data.core.toggle_comp(data.info[self.ui.pointer].id);
+        data.core.toggle_comp(data.info[self.ui.pointer()].id);
         data.info = data.core.get_entries_info();
         self.format_entries(data, settings, manager);
     }
@@ -250,14 +253,14 @@ impl ItemList {
                 PointerDown     => self.pointer_down(manager, settings),
                 Select          => {
                     if let Some(children) = &check_children {
-                        if children.is_child(self.ui.pointer) { continue }
+                        if children.is_child(self.ui.pointer()) { continue }
                     }
 
-                    if self.ui.pointer != self.ui.selected().unwrap() {
+                    if self.ui.pointer() != self.ui.selected().unwrap() {
                         ret = Some((
                             self.ui.selected().unwrap(),
                             self.get_position(settings, manager, prompt),
-                            self.ui.pointer,
+                            self.ui.pointer(),
                         ));
                         break;
                     }
@@ -277,7 +280,7 @@ impl ItemList {
 
             if let Some(temp) = self.multi_select(settings, manager, prompt, Some(children)){
                 data.core.move_entry(data.info[temp.0].id, temp.1, data.info[temp.2].id);
-                self.find_new_id_pos(data.info[self.ui.pointer].id, data, settings, manager);
+                self.find_new_id_pos(data.info[self.ui.pointer()].id, data, settings, manager);
             }
             else{
                 self.ui.refresh_colors(&settings.colors(), manager);
@@ -291,7 +294,7 @@ impl ItemList {
         
         if let Some(temp) = self.multi_select(settings, manager, prompt, None){
             data.core.copy_entry(data.info[temp.0].id, temp.1, data.info[temp.2].id);
-            self.find_new_id_pos(data.info[self.ui.pointer].id, data, settings, manager);
+            self.find_new_id_pos(data.info[self.ui.pointer()].id, data, settings, manager);
         }
         else{
             self.ui.refresh_colors(&settings.colors(), manager);

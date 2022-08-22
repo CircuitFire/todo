@@ -5,7 +5,7 @@ use super::*;
 pub struct ListUi {
     object: Rc<RefCell<Object>>,
     frame: Rc<RefCell<frame_types::Text>>,
-    pub pointer: usize,
+    pointer: usize,
     selected: Option<usize>,
 }
 
@@ -35,6 +35,10 @@ impl ListUi {
 
     pub fn pointer(&self) -> usize{
         self.pointer
+    }
+
+    pub fn set_pointer_no_update(&mut self, new: usize) {
+        self.pointer = new;
     }
 
     pub fn select(&mut self) {
@@ -86,6 +90,7 @@ impl ListUi {
         self.frame.borrow().len()
     }
 
+    ///If the list is longer than the allocated screen space this will offset the shown list items when the pointer gets to the middle of the list instead of moving the pointer.
     fn offset(&mut self){
         let obj_size = self.object.borrow().size.y;
         let entry_len = self.frame.borrow().len();
@@ -128,6 +133,7 @@ impl ListUi {
         &self.frame
     }
 
+    ///Reanalyzes what entries should be colored. Used after editing the item list.
     pub fn refresh_colors(&mut self, colors: &Colors, manager: &mut Manager){
         let mut frame = self.frame.borrow_mut();
         frame.fill = PixelData::new(' ', colors.default, colors.background);
@@ -145,7 +151,16 @@ impl ListUi {
 
         frame.set_fg(self.pointer, colors.pointer);
 
-        manager.add_task(self.object.borrow().update());
+        self.update(manager);
+    }
+
+    ///checks if the pointer is in range and moves it if it is not and refreshes the colors.
+    pub fn refresh(&mut self, colors: &Colors, manager: &mut Manager){
+        if self.pointer > self.len() {
+            self.pointer = self.len();
+        }
+
+        self.refresh_colors(colors, manager);
     }
 
     pub fn clear(&mut self) {

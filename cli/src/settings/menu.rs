@@ -66,7 +66,7 @@ impl SettingMenu {
                     prompt.set_prompt(manager, cur_data.controls.help_tip());
                 },
                 Select      => {
-                    match self.main.pointer {
+                    match self.main.pointer() {
                         0 => self.controls(manager, help, prompt, cur_data, &mut temp_controls),
                         1 => self.colors(manager, help, prompt, cur_data, &mut temp_colors),
                         2 => self.formatter(manager, help, prompt, cur_data, &mut temp_formatter),

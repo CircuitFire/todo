@@ -81,7 +81,7 @@ dependencies = [
 [[package]]
 name = "frames"
 version = "0.1.0"
-source = "git+https://github.com/CircuitFire/frames.git#e03e15fcecb238caf0fa0747fad465692c54b813"
+source = "git+https://github.com/CircuitFire/frames.git?tag=0.1.0#e03e15fcecb238caf0fa0747fad465692c54b813"
 dependencies = [
  "coord",
  "crossterm",

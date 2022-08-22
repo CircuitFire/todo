@@ -5,6 +5,7 @@ use super::*;
 
 #[derive(PartialEq, Debug)]
 pub enum HelpMenuType {
+    None,
     Main,
     Item,
     Setting,
@@ -39,7 +40,7 @@ impl HelpMenu {
         HelpMenu {
             object: obj,
             frame: frame,
-            current: Main,
+            current: None,
         }
     }
 
@@ -113,8 +114,9 @@ impl HelpMenu {
         self.object.borrow_mut().offset.y = 0;
 
         match help_type {
-            Main => self.main_menu(controls),
-            Item => self.item_menu(controls),
+            None    => (),
+            Main    => self.main_menu(controls),
+            Item    => self.item_menu(controls),
             Setting => self.settings_menu(controls),
         }
     }
