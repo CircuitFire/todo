@@ -19,12 +19,12 @@ fn handle_args() -> Arg {
             continue
         }
 
-        let path = PathBuf::from(arg);
+        // let path = PathBuf::from(arg);
 
-        if path.is_file() {
-            out.file = Some(path);
-            continue
-        }
+        // if path.is_file() {
+        //     out.file = Some(path);
+        //     continue
+        // }
     }
 
     out

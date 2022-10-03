@@ -139,6 +139,7 @@ impl HelpMenu {
         frame.push(format!("Increase Depth             : {}", controls.right.display_quot()));
         frame.push(format!("Decrease Depth             : {}", controls.left.display_quot()));
         frame.push(format!("Select                     : {}", controls.select.display_quot()));
+        frame.push(format!("Toggle Compete             : {}", controls.toggle.display_quot()));
         frame.push(format!("Save                       : {}", controls.save.display_quot()));
         frame.push(format!("Print into .txt            : {}", controls.print.display_quot()));
         frame.push(format!("Print unfinished into .txt : {}", controls.print_unfinished.display_quot()));
